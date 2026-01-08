@@ -1,3 +1,5 @@
+const SERVER_URL = "https://jsonplaceholder.typicode,com/posts";
+
 // Load saved quotes from localStorage
 const storedQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
 if (storedQuotes.length > 0) {
@@ -145,3 +147,46 @@ function displayQuotes(quotesToDisplay) {
     quoteContainer.appendChild(p);
   });
 }
+
+async function fetchServerQuotes() {
+    try {
+        const response = await fetch(SERVER_URL);
+        const data = await response.json();
+
+        // Convert server data to our quote format
+        const serverQuotes = data.slice(0, 5).map(item => ({ 
+            text: item.title,
+            category: "server"
+        }));
+        syncWithServer(serverQuotes);
+      } 
+      
+      catch (error) {
+        console.error("Server fetch failed:", error);
+        alert("Server fetch failed - check console");
+      }
+    }
+    
+function syncWithServer(serverQuotes) {
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+  // Simple conflict rule: server data takes precedence
+  const mergedQuotes = [...serverQuotes];
+
+  localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
+  quotes.length = 0;
+  quotes.push(...mergedQuotes);
+
+  populateCategories();
+  filterQuotes();
+
+  showSyncNotification();
+}
+
+function showSyncNotification() {
+  alert("Quotes synced with server. Server data was applied.");
+}
+// Run server sync once when page loads
+fetchServerQuotes();
+// Sync with server every 30 seconds (simulation)
+setInterval(fetchServerQuotes, 30000);
