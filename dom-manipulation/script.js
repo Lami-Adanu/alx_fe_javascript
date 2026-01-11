@@ -181,11 +181,11 @@ function syncWithServer(serverQuotes) {
 
 // ===== Initialize App =====
 window.addEventListener("DOMContentLoaded", () => {
-  createAddQuoteForm();   // ✅ ADDED SAFELY
+  createAddQuoteForm();   //  ADDED SAFELY
   populateCategories();
   filterQuotes();
   showRandomQuote();
 });
 
 // Optional periodic sync
-setInterval(fetchServerQuotes, 30000);
+setInterval(fetchQuotesFromServer, 30000);
