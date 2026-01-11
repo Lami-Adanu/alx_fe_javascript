@@ -33,6 +33,26 @@ function showRandomQuote() {
     sessionStorage.setItem("lastQuoteIndex", randomIndex);
 }
 
+function createAddQuoteForm() {
+  const quoteForm = document.createElement("form");
+  const textInput = document.createElement("input");
+  textInput.id = "newQuoteText";
+  textInput.placeholder = "Quote Text";
+  const categoryInput = document.createElement("input");
+  categoryInput.id = "newQuoteCategory";
+  categoryInput.placeholder = "Category";
+  const button = document.createElement("button");
+  button.textContent = "Add Quote";
+  button.type = "submit";
+  
+  forms.append(textInput, categoryInput, button);
+  document.body.appendChild(form);
+  forms.addEventListener("submit", function (e){
+  e.preventDefault();
+  addQuote();
+  });
+}
+
 // ===== Function: Add Quote (called by HTML button) =====
 function addQuote() {
   const quoteText = document.getElementById("newQuoteText").value;
