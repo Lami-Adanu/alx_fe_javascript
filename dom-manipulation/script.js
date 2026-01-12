@@ -137,7 +137,6 @@ function addQuote() {
     alert("Please fill in both fields.");
     return;
   }
-
   const newQuote = { text: quoteText, category: quoteCategory };
   quotes.push(newQuote);
 
@@ -150,6 +149,36 @@ function addQuote() {
   document.getElementById("newQuoteText").value = "";
   document.getElementById("newQuoteCategory").value = "";
 }
+  
+  const importInput = document.createElement("input");
+  importInput.type = "file";
+  importInput.accept = ".json";
+  document.body.appendChild(importInput);
+
+  importInput.addEventListener("change", function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function (event) {
+      try{
+        const imported = JSON.parse(event.target.result);
+        if (Array.isArray(imported)){
+          quotes.length = 0;
+          quote.push(...imported);
+          localStorage.setItem("quotes", JSON.stringify(quotes));
+          populateCategories();
+          filterQuotes();
+        }
+      } catch{
+        alert("Invalid file");
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  
 
 // ===== Export Quotes =====
 const exportBtn = document.getElementById("exportBtn");
@@ -168,6 +197,7 @@ if (exportBtn) {
   });
 }
 
+
 // ===== Fetch Server Quotes (Optional, Safe) =====
 async function fetchQuotesFromServer() {
   try {
@@ -179,13 +209,13 @@ async function fetchQuotesFromServer() {
       category: "server"
     }));
 
-    syncWithServer(serverQuotes);
+    syncQuotes(serverQuotes);
   } catch (error) {
     console.error("Server fetch failed:", error);
   }
 }
 
-function syncWithServer(serverQuotes) {
+function syncQuotes(serverQuotes) {
   localStorage.setItem("quotes", JSON.stringify(serverQuotes));
   quotes.length = 0;
   quotes.push(...serverQuotes);
