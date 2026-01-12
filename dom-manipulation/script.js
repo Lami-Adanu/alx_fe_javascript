@@ -114,6 +114,20 @@ function displayQuotes(quotesToDisplay) {
   });
 }
 
+async function postQuoteToServer(quote) {
+  try{
+    await fetch(SERVER_URL, {
+      method:"POST", 
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify(quote)
+    });
+  } catch(error){
+    console.error("Post failed:",error);
+  }
+}
+
 // ===== Add Quote =====
 function addQuote() {
   const quoteText = document.getElementById("newQuoteText").value;
@@ -128,6 +142,7 @@ function addQuote() {
   quotes.push(newQuote);
 
   localStorage.setItem("quotes", JSON.stringify(quotes));
+  postQuoteToServer(newQuote);
 
   populateCategories();
   filterQuotes();
@@ -154,7 +169,7 @@ if (exportBtn) {
 }
 
 // ===== Fetch Server Quotes (Optional, Safe) =====
-async function fetchServerQuotes() {
+async function fetchQuotesFromServer() {
   try {
     const response = await fetch(SERVER_URL);
     const data = await response.json();
